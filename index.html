@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Переход в Telegram...</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background: #f0f2f5; color: #333; }
+        .box { background: white; padding: 30px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        a { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #0088cc; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Открываем профиль...</h2>
+        <p>Если Telegram не открылся автоматически, нажмите на кнопку ниже.</p>
+        <a id="tgLink" href="#">Открыть Telegram</a>
+    </div>
+
+    <script>
+        // Достаем ID из нашей ссылки (например: ?id=5216997781)
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+
+        if (userId) {
+            // Формируем внутреннюю ссылку Telegram
+            const tgUrl = 'tg://user?id=' + userId;
+            
+            // Вставляем ее в кнопку на всякий случай
+            document.getElementById('tgLink').href = tgUrl;
+            
+            // Пытаемся мгновенно перекинуть пользователя
+            window.location.replace(tgUrl);
+        } else {
+            document.querySelector('.box').innerHTML = "<h2>Ошибка: ID пользователя не указан.</h2>";
+        }
+    </script>
+</body>
+</html>
