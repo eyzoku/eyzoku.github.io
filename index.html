@@ -3,36 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Переход в Telegram...</title>
+    <title>База данных Убежища...</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 50px; background: #f0f2f5; color: #333; }
-        .box { background: white; padding: 30px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        a { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #0088cc; color: white; text-decoration: none; border-radius: 5px; }
+        body { font-family: monospace; text-align: center; padding: 50px; background: #e3dcc8; color: #333; }
+        .box { background: #fdf5e6; padding: 30px; border-radius: 5px; max-width: 400px; margin: auto; border: 2px solid #b9ad88; box-shadow: 5px 5px 0px rgba(0,0,0,0.2); }
+        h2 { text-transform: uppercase; }
+        a { display: block; margin-top: 15px; padding: 12px 20px; background: #4a5342; color: #fdf5e6; text-decoration: none; border-radius: 3px; font-weight: bold; border: 1px solid #2a3025; }
+        a:hover { background: #5c6652; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2>Открываем профиль...</h2>
-        <p>Если Telegram не открылся автоматически, нажмите на кнопку ниже.</p>
-        <a id="tgLink" href="#">Открыть Telegram</a>
+        <h2>Досье резидента</h2>
+        <p>Выберите защищенный канал связи с резидентом:</p>
+        <a id="tgIdLink" href="#" style="display: none;">Канал A (Идентификатор)</a>
+        <a id="tgUserLink" href="#" style="display: none;">Канал B (Позывной)</a>
     </div>
 
     <script>
-        // Достаем ID из нашей ссылки (например: ?id=5216997781)
         const urlParams = new URLSearchParams(window.location.search);
         const userId = urlParams.get('id');
+        const userName = urlParams.get('user');
 
-        if (userId) {
-            // Формируем внутреннюю ссылку Telegram
-            const tgUrl = 'tg://user?id=' + userId;
-            
-            // Вставляем ее в кнопку на всякий случай
-            document.getElementById('tgLink').href = tgUrl;
-            
-            // Пытаемся мгновенно перекинуть пользователя
-            window.location.replace(tgUrl);
-        } else {
-            document.querySelector('.box').innerHTML = "<h2>Ошибка: ID пользователя не указан.</h2>";
+        let defaultUrl = "";
+
+        if (userId && userId !== "None") {
+            const tgIdUrl = 'tg://user?id=' + userId;
+            const btnId = document.getElementById('tgIdLink');
+            btnId.href = tgIdUrl;
+            btnId.style.display = "block";
+            defaultUrl = tgIdUrl;
+        }
+
+        if (userName && userName !== "БЕЗЫМЯННЫЙ") {
+            const tgUserUrl = 'https://t.me/' + userName;
+            const btnUser = document.getElementById('tgUserLink');
+            btnUser.href = tgUserUrl;
+            btnUser.style.display = "block";
+            if (!defaultUrl) defaultUrl = tgUserUrl;
+        }
+
+        if (!userId && !userName) {
+            document.querySelector('.box').innerHTML = "<h2>Ошибка доступа</h2><p>Данные резидента повреждены или удалены.</p>";
+        } else if (defaultUrl) {
+            // Мгновенный редирект по приоритетному каналу (обычно ID)
+            window.location.replace(defaultUrl);
         }
     </script>
 </body>
