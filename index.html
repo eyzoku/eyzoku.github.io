@@ -10,6 +10,7 @@
         h2 { text-transform: uppercase; }
         a { display: block; margin-top: 15px; padding: 12px 20px; background: #4a5342; color: #fdf5e6; text-decoration: none; border-radius: 3px; font-weight: bold; border: 1px solid #2a3025; }
         a:hover { background: #5c6652; }
+        .footer { margin-top: 30px; font-size: 10px; color: #8c8571; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
 <body>
@@ -18,6 +19,10 @@
         <p>Выберите защищенный канал связи с резидентом:</p>
         <a id="tgIdLink" href="#" style="display: none;">Канал A (Идентификатор)</a>
         <a id="tgUserLink" href="#" style="display: none;">Канал B (Позывной)</a>
+        <div class="footer">
+            Vault-Tec Network // Term-Sys v.1.0<br>
+            Сгенерировано терминалом @sponger_bot
+        </div>
     </div>
 
     <script>
@@ -27,27 +32,38 @@
 
         let defaultUrl = "";
 
+        // Обработка Канала А (по ID)
         if (userId && userId !== "None") {
             const tgIdUrl = 'tg://user?id=' + userId;
             const btnId = document.getElementById('tgIdLink');
             btnId.href = tgIdUrl;
             btnId.style.display = "block";
-            defaultUrl = tgIdUrl;
+            defaultUrl = tgIdUrl; 
         }
 
-        if (userName && userName !== "БЕЗЫМЯННЫЙ") {
-            const tgUserUrl = 'https://t.me/' + userName;
+        // Обработка Канала B (по Юзернейму или крестику)
+        if (userName) {
             const btnUser = document.getElementById('tgUserLink');
-            btnUser.href = tgUserUrl;
-            btnUser.style.display = "block";
-            if (!defaultUrl) defaultUrl = tgUserUrl;
+            if (userName === "✗") {
+                // Если неграмотный резидент с крестиком
+                btnUser.href = 'https://natribu.org/';
+                btnUser.innerText = 'Канал B (Архив)'; // Можно переименовать кнопку
+                btnUser.style.display = "block";
+            } else if (userName !== "БЕЗЫМЯННЫЙ") {
+                // Если нормальный юзернейм
+                const tgUserUrl = 'https://t.me/' + userName;
+                btnUser.href = tgUserUrl;
+                btnUser.style.display = "block";
+                // Переопределяем дефолтный URL на https://t.me, так как он надежнее для iOS
+                defaultUrl = tgUserUrl; 
+            }
         }
 
         if (!userId && !userName) {
             document.querySelector('.box').innerHTML = "<h2>Ошибка доступа</h2><p>Данные резидента повреждены или удалены.</p>";
         } else if (defaultUrl) {
-            // Мгновенный редирект по приоритетному каналу (обычно ID)
-            window.location.replace(defaultUrl);
+            // Пытаемся сделать редирект (iOS может заблокировать, тогда юзер просто нажмет кнопку)
+            setTimeout(() => { window.location.replace(defaultUrl); }, 500);
         }
     </script>
 </body>
